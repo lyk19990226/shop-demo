@@ -1,0 +1,25 @@
+.home .crumbs{
+  margin: 20px 0;
+}
+.home .card {
+  padding: 0 28px 0;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 3px;
+}
+.card .row {
+  display: flex;
+}
+.card .row .item {
+  width:108px;
+  height: 48px;
+  line-height: 48px;
+  cursor: pointer;
+}
+.card .row .item:nth-child(1) {
+  color:#999;
+  cursor: auto;
+}
+.card .row .item.active {
+  color:red;
+}

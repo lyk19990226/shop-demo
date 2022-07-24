@@ -1,0 +1,119 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script src="./js/utils.js" defer></script>
+  <script src="./js/index.js" defer></script>
+  <link rel="stylesheet" href="./css/common.css">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/home.css">
+  <title>华为商城(仿)</title>
+  <style>
+    .commodity-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .commodity-list .item {
+      width: 291px;
+      background-color: #fff;
+      margin-bottom: 12px;
+      border-radius: 3px;
+    }
+
+    .commodity-list .item.empty {
+      height: 0;
+    }
+
+    .commodity-list .item>a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 16px;
+
+    }
+
+    .commodity-list .item .album {
+      width: 180px;
+      height: 180px;
+      margin: 30px 0;
+    }
+
+    .commodity-list .item>a .title,
+    .commodity-list .item>a .price {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .commodity-list .item>a .desc {
+      height: 19px;
+      font-size: 14px;
+      margin: 14px 0;
+    }
+
+    .commodity-list .item>a .price {
+      color: red;
+    }
+
+    .commodity-list .item>a .tips {
+      color: red;
+      margin: 12px 0;
+    }
+
+    .commodity-list .item>a .tips .tip-item {
+      text-align: center;
+      border: 1px solid red;
+      padding: 2px 3px;
+      margin: 0 3px;
+      border-radius: 5px;
+    }
+
+    .commodity-list .item>a .evaluate span {
+      color: #666;
+      margin: 0 3px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="home wrapper">
+    <div class="crumbs">
+      <span>首页</span>
+      <span>&gt;</span>
+      <span>笔记本</span>
+    </div>
+    <div class="card">
+      <!-- 分类 -->
+      <ul class="row category">
+        <li class="item">分类:</li>
+        <li class="item">笔记本</li>
+        <li class="item">台式机</li>
+        <li class="item">智慧屏</li>
+      </ul>
+      <!-- 服务优惠 -->
+      <ul class="row discount">
+        <li class="item">服务优惠:</li>
+        <li class="item">仅看有货</li>
+        <li class="item">分期免息</li>
+        <li class="item">优惠商品</li>
+      </ul>
+      <!-- 排序 -->
+      <ul class="row sort">
+        <li class="item">排序:</li>
+        <li class="item active">综合</li>
+        <li class="item">最新</li>
+        <li class="item">评论数</li>
+        <li class="item">价格</li>
+      </ul>
+    </div>
+
+    <ul class="commodity-list">
+    </ul>
+  </div>
+</body>
+
+</html>
