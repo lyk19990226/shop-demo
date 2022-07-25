@@ -6,15 +6,13 @@ $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/ban
 // 获取商品列表信息 get请求
 $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proinfo', res => {
   var data = res
-  refreshPage()
+  refreshPage(data)
 
-  
+  // 2、服务优惠-> 点击筛选商品功能
   var discountUlEl = document.querySelector('.discount')
-  //记录点击服务优惠的筛选项
-  var discountArr = []
-
+  var discountArr = []  //记录点击服务优惠的筛选项
   discountUlEl.onclick = function (event) {
-    if (event.target.classList.contains('item-head')|| event.target.classList.contains('discount')) return
+    if (event.target.classList.contains('item-head') || event.target.classList.contains('discount')) return
 
     if (event.target.classList.toggle('active')) {
       discountArr.push(event.target.textContent)
@@ -33,16 +31,45 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     }
     // 拿到匹配的商品列表后，进行重新展示
     data = newData
-    refreshPage()
+    shopListSort()
   }
 
 
+  ///3、点击排序功能
+  var sortEl = document.querySelector('.sort')
+  var activeEl = sortEl.querySelector('.active')
+  var sortStr = '综合'//记录此时的排序方式
+  sortEl.onclick = function (event) {
+    if (event.target.classList.contains('item-head') || event.target.classList.contains('sort')) return
+    activeEl.classList.remove('active')
+    event.target.classList.add('active')
+    activeEl = event.target
+    if(sortStr === event.target.textContent) return
+    sortStr = event.target.textContent//修改排序方式
+    shopListSort()
+  }
 
 
-// 更新商品列表
-  function refreshPage() {
+  function shopListSort() {//商品列表排序
+    var sortData = JSON.parse(JSON.stringify(data))// 深拷贝
+    console.log(sortData)
+    if (sortStr === '好评') {
+      sortData.sort((item1, item2) => item2.goodRate - item1.goodRate)
+    } else if (sortStr === '评论数') {
+      sortData.sort((item1, item2) => item2.rateCount - item1.rateCount)
+    } else if (sortStr === '价格') {
+      sortData.sort((item1, item2) => item2.price - item1.price)
+    } else {
+      sortData = data
+    }
+    console.log('调用了shopListSort函数对商品重新进行了排序','排序规则:',sortStr)
+    refreshPage(sortData)
+  }
+
+  // 1、更新商品列表
+  function refreshPage(data) {
     var commodityEl = document.querySelector('.commodity-list')
-    commodityEl .innerHTML = ""
+    commodityEl.innerHTML = ""
     for (var item of data) {
       var createLiEl = document.createElement('li')
       createLiEl.classList.add('item')
@@ -55,8 +82,8 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
       createLiEl.innerHTML = `
         <a href="#">
           <img src="${serverURL}${item.photoPath}428_428_${item.photoName}" alt="" class="album">
-          <div class="title">${item.name}</div>
-          <p class="desc">${item.promotionInfo}</p>
+          <div class="title ellipsis_one_line">${item.name}</div>
+          <p class="desc ellipsis_one_line">${item.promotionInfo}</p>
           <p class="price">￥${item.price}</p>
           <div class="tips">${tipList}</div>
           <div class="evaluate">
@@ -67,5 +94,6 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
       commodityEl.append(createLiEl)
     }
     generateEmptyLiEl(commodityEl, 'li', 2, ['item', 'empty'])
+    console.log('调用了refreshPage函数更新了页面')
   }
 })

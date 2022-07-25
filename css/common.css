@@ -2,3 +2,8 @@
   width: 1200px;
   margin:0 auto;
 }
+.ellipsis_one_line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
