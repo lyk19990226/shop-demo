@@ -23,8 +23,12 @@
       background-color: #fff;
       margin-bottom: 12px;
       border-radius: 3px;
+      transition: ease 0.3s;
     }
-
+    .commodity-list .item:hover{
+      transform: translate(0,-3px);
+      box-shadow: 0 0 9px 3px rgba(0, 0, 0, 0.2)
+    }
     .commodity-list .item.empty {
       height: 0;
     }
@@ -89,21 +93,21 @@
     <div class="card">
       <!-- 分类 -->
       <ul class="row category">
-        <li class="item">分类:</li>
+        <li class="item item-head">分类:</li>
         <li class="item">笔记本</li>
         <li class="item">台式机</li>
         <li class="item">智慧屏</li>
       </ul>
       <!-- 服务优惠 -->
       <ul class="row discount">
-        <li class="item">服务优惠:</li>
+        <li class="item item-head">服务优惠:</li>
         <li class="item">仅看有货</li>
         <li class="item">分期免息</li>
         <li class="item">优惠商品</li>
       </ul>
       <!-- 排序 -->
       <ul class="row sort">
-        <li class="item">排序:</li>
+        <li class="item item-head">排序:</li>
         <li class="item active">综合</li>
         <li class="item">最新</li>
         <li class="item">评论数</li>
