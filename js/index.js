@@ -7,7 +7,6 @@ $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/ban
 $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proinfo', res => {
   var data = res
   refreshPage(data)
-
   // 2、服务优惠-> 点击筛选商品功能
   var discountUlEl = document.querySelector('.discount')
   var discountArr = []  //记录点击服务优惠的筛选项
@@ -19,18 +18,29 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     } else {
       discountArr.splice(discountArr.findIndex(item => item === event.target.textContent), 1)
     }
+// 过滤方法一：（不推荐）
+    // //每次都拿到服务器返回的全部商品列表信息
+    // var newData = res
+    // // 然后根据 每次点击记录的服务优惠筛选项discountArr，进行过滤 拿到相关匹配的商品列表
+    // for (var item1 of discountArr) {
+    //   newData = newData.filter(item => {
+    //     return item.services.includes(item1)
+    //   })
 
-    //每次都拿到服务器返回的全部商品列表信息
-    var newData = res
-    // 然后根据 每次点击记录的服务优惠筛选项discountArr，进行过滤 拿到相关匹配的商品列表
-    for (var item1 of discountArr) {
-      newData = newData.filter(item => {
-        return item.services.includes(item1)
-      })
-
-    }
-    // 拿到匹配的商品列表后，进行重新展示
-    data = newData
+    // }
+    // // 拿到匹配的商品列表后，进行重新展示
+    // data = newData
+// 过滤方法二
+    data = res.filter(item => {
+      var isFlag = true
+      for(var item1 of discountArr){
+        if(!item.services.includes(item1)) {
+          isFlag = false
+          break
+        }
+      }
+      return isFlag
+    })
     shopListSort()
   }
 
@@ -96,4 +106,5 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     generateEmptyLiEl(commodityEl, 'li', 2, ['item', 'empty'])
     console.log('调用了refreshPage函数更新了页面')
   }
+
 })
