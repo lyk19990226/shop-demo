@@ -3,7 +3,7 @@ var discountUlEl = document.querySelector('.discount')
 var discountArr = []  //记录点击服务优惠的筛选项
 var sortEl = document.querySelector('.sort')
 var activeEl = sortEl.querySelector('.active')
-var sortStr = '综合'//记录此时的排序方式
+var sortStr = "default"//记录此时的排序方式
 // 获取商品列表信息 get请求
 $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proinfo', res => {
   var data = res
@@ -17,7 +17,7 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     } else {
       discountArr.splice(discountArr.findIndex(item => item === event.target.textContent), 1)
     }
-// 过滤方法一：（不推荐）
+    // 过滤方法一：（不推荐）
     // //每次都拿到服务器返回的全部商品列表信息
     // var newData = res
     // // 然后根据 每次点击记录的服务优惠筛选项discountArr，进行过滤 拿到相关匹配的商品列表
@@ -29,44 +29,38 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     // }
     // // 拿到匹配的商品列表后，进行重新展示
     // data = newData
-// 过滤方法二
+    // 过滤方法二
     data = res.filter(item => {
       var isFlag = true
-      for(var item1 of discountArr){
-        if(!item.services.includes(item1)) {
+      for (var item1 of discountArr) {
+        if (!item.services.includes(item1)) {
           isFlag = false
           break
         }
       }
       return isFlag
     })
-    shopListSort()
+    shopListSort(sortStr)
   }
 
-  ///3、点击排序功能
+  ///3、点击进行排序
   sortEl.onclick = function (event) {
     if (event.target.classList.contains('item-head') || event.target.classList.contains('sort')) return
     activeEl.classList.remove('active')
     event.target.classList.add('active')
     activeEl = event.target
-    if (sortStr === event.target.textContent) return
-    sortStr = event.target.textContent//修改排序方式
-    shopListSort()
+    if (sortStr === event.target.dataset.key) return
+    sortStr = event.target.dataset.key
+    shopListSort(sortStr)
   }
 
-  // 点击排序，页面刷新工具函数封装
-  function shopListSort() {//商品列表排序
+  // 排序功能，页面刷新工具函数封装
+  function shopListSort(key) {
     var sortData = JSON.parse(JSON.stringify(data))// 深拷贝
-    console.log(sortData)
-    if (sortStr === '好评') {
-      sortData.sort((item1, item2) => item2.goodRate - item1.goodRate)
-    } else if (sortStr === '评论数') {
-      sortData.sort((item1, item2) => item2.rateCount - item1.rateCount)
-    } else if (sortStr === '价格') {
-      sortData.sort((item1, item2) => item2.price - item1.price)
-    } else {
-      sortData = data
-    }
+    if (key === "default") sortData = data
+    sortData.sort((item1, item2) => {
+      return item2[key] - item1[key]
+    })
     console.log('调用了shopListSort函数对商品重新进行了排序', '排序规则:', sortStr)
     refreshPage(sortData)
   }
