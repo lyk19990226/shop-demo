@@ -1,16 +1,15 @@
 var serverURL = "https://res.vmallres.com/pimages"
-// 获取轮播图列表信息 post请求
-$.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/banners', res => {
-  // console.log(res)
-})
+var discountUlEl = document.querySelector('.discount')
+var discountArr = []  //记录点击服务优惠的筛选项
+var sortEl = document.querySelector('.sort')
+var activeEl = sortEl.querySelector('.active')
+var sortStr = '综合'//记录此时的排序方式
 // 获取商品列表信息 get请求
 $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proinfo', res => {
   var data = res
   refreshPage(data)
 
   // 2、服务优惠-> 点击筛选商品功能
-  var discountUlEl = document.querySelector('.discount')
-  var discountArr = []  //记录点击服务优惠的筛选项
   discountUlEl.onclick = function (event) {
     if (event.target.classList.contains('item-head') || event.target.classList.contains('discount')) return
 
@@ -34,22 +33,18 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     shopListSort()
   }
 
-
   ///3、点击排序功能
-  var sortEl = document.querySelector('.sort')
-  var activeEl = sortEl.querySelector('.active')
-  var sortStr = '综合'//记录此时的排序方式
   sortEl.onclick = function (event) {
     if (event.target.classList.contains('item-head') || event.target.classList.contains('sort')) return
     activeEl.classList.remove('active')
     event.target.classList.add('active')
     activeEl = event.target
-    if(sortStr === event.target.textContent) return
+    if (sortStr === event.target.textContent) return
     sortStr = event.target.textContent//修改排序方式
     shopListSort()
   }
 
-
+  // 点击排序，页面刷新工具函数封装
   function shopListSort() {//商品列表排序
     var sortData = JSON.parse(JSON.stringify(data))// 深拷贝
     console.log(sortData)
@@ -62,7 +57,7 @@ $.get('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/proi
     } else {
       sortData = data
     }
-    console.log('调用了shopListSort函数对商品重新进行了排序','排序规则:',sortStr)
+    console.log('调用了shopListSort函数对商品重新进行了排序', '排序规则:', sortStr)
     refreshPage(sortData)
   }
 

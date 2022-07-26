@@ -1,0 +1,104 @@
+.banners {
+  position: relative;
+  cursor: pointer;
+}
+
+/* 图片布局 */
+.banners .images {
+  position: relative;
+  height: 550px;
+  overflow: hidden;
+}
+
+.banners .images .item {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: ease 500ms;
+}
+
+.banners .images .item {
+  opacity: 0;
+}
+
+.banners .images .item.active {
+  opacity: 1;
+}
+
+.banners .images .item>img {
+  width: 1920px;
+  height: 550px;
+}
+
+/* 画按钮 */
+.banners .btn-list .pre,
+.banners .btn-list .next {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 56px;
+  height: 56px;
+  background-color: rgba(137, 132, 132, .5);
+  border-radius: 50%;
+}
+
+.banners .btn-list .pre:hover,
+.banners .btn-list .next:hover {
+  background-color: rgba(58, 56, 56, 0.5);
+}
+
+.banners .btn-list .pre {
+  left: 52px;
+}
+
+.banners .btn-list .next {
+  right: 52px;
+}
+
+.banners .btn-list .pre>span,
+.banners .btn-list .next>span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  border-width: 2px;
+  border-style: solid;
+  border-color: white white transparent transparent;
+  position: absolute;
+}
+
+.banners .btn-list .pre>span {
+  transform: rotate(-0.375turn);
+  left: 6px;
+}
+
+.banners .btn-list .next>span {
+  transform: rotate(0.125turn);
+  right: 6px;
+}
+
+/* 指示器样式 */
+.banners .indicator {
+  position: absolute;
+  display: flex;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0 auto;
+  bottom: 32px;
+}
+
+.banners .indicator .item {
+  width: 8px;
+  height: 8px;
+  margin: 0 8px;
+  border-radius: 50%;
+  background-color: rgb(189, 182, 182);
+}
+
+.banners .indicator .item.active {
+  background-color: red;
+}
