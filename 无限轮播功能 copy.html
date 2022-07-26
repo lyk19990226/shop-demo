@@ -1,0 +1,289 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <link rel="stylesheet" href="./css/reset.css">
+  <title>轮播图</title>
+  <style>
+    .banners {
+      max-width: 1920px;
+      margin: 0 auto;
+      position: relative;
+      cursor: pointer;
+      /* overflow: hidden; */
+    }
+
+    /* 图片布局 */
+    .banners .images {
+      position: relative;
+      height: 550px;
+      /* transition: transform ease 300ms; */
+      transition: left ease 300ms;
+
+    }
+
+    .banners .images .item {
+      position: absolute;
+      width: 100%;
+      overflow: hidden;
+    }
+
+
+    .banners .images .item>img {
+      width: 1920px;
+      height: 550px;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* 画按钮 */
+    .banners .btn-list .pre,
+    .banners .btn-list .next {
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      width: 56px;
+      height: 56px;
+      background-color: rgba(137, 132, 132, .5);
+      border-radius: 50%;
+    }
+
+    .banners .btn-list .pre:hover,
+    .banners .btn-list .next:hover {
+      background-color: rgba(58, 56, 56, 0.5);
+    }
+
+    .banners .btn-list .pre {
+      left: 52px;
+    }
+
+    .banners .btn-list .next {
+      right: 52px;
+    }
+
+    .banners .btn-list .pre>span,
+    .banners .btn-list .next>span {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      border-width: 2px;
+      border-style: solid;
+      border-color: white white transparent transparent;
+      position: absolute;
+    }
+
+    .banners .btn-list .pre>span {
+      transform: rotate(-0.375turn);
+      left: 6px;
+    }
+
+    .banners .btn-list .next>span {
+      transform: rotate(0.125turn);
+      right: 6px;
+    }
+
+    /* 指示器样式 */
+    .banners .indicator {
+      position: absolute;
+      display: flex;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0 auto;
+      bottom: 32px;
+    }
+
+    .banners .indicator .item {
+      width: 8px;
+      height: 8px;
+      margin: 0 8px;
+      border-radius: 50%;
+      background-color: rgb(189, 182, 182);
+    }
+
+    .banners .indicator .item.active {
+      background-color: red;
+    }
+
+    /* 禁用元素点击事件 */
+    .disable {
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <button><a href="./index.html">返回主界面</a></button>
+  <div class="banners">
+    <ul class="images"></ul>
+    <div class="btn-list">
+      <div class="pre">
+        <span></span>
+      </div>
+      <div class="next">
+        <span></span>
+      </div>
+    </div>
+    <div class="indicator"></div>
+  </div>
+  <script>
+    var bannerServerURL = "https://res.vmallres.com/"
+    var bannersEl = document.querySelector('.banners')
+    var imagesUlEl = document.querySelector('.images')
+    var indicatorEl = document.querySelector('.indicator')
+    var preBtnEl = document.querySelector('.pre')
+    var nextBtnEl = document.querySelector('.next')
+    var preBtnIndex = 0 //记录上一个active的索引
+    var currentBtnIndex = 0//记录当前active的索引
+    var timer = null //定时器初始值
+    var animationDuration = 300//执行动画的过渡时间
+    // 获取轮播图列表信息 post请求
+    $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/banners', res => {
+      var bannersCount = res.length
+
+      for (var i = 0; i < bannersCount; i++) {
+        // 动态创建img列表
+        var createLiEl = document.createElement('li')
+        var imgEl = document.createElement('img')
+        createLiEl.classList.add('item')
+        createLiEl.style.left = `${i * 100}%`
+        imgEl.src = `${bannerServerURL}${res[i].imgUrl}`
+        createLiEl.append(imgEl)
+        imagesUlEl.append(createLiEl)
+
+        // 动态创建指示器列表
+        var createDivEl = document.createElement('div')
+        createDivEl.classList.add('item')
+        indicatorEl.append(createDivEl)
+      }
+      // 克隆前后两个元素，并插入在两端
+      var firstCloneLiEl = imagesUlEl.children[0].cloneNode(true)
+      var lastCloneLiEl = imagesUlEl.children[bannersCount - 1].cloneNode(true)
+      firstCloneLiEl.style.left = `${bannersCount * 100}%`
+      lastCloneLiEl.style.left = "-100%"
+      imagesUlEl.append(firstCloneLiEl)
+      imagesUlEl.prepend(lastCloneLiEl)
+
+      // 给第一个图片，及指示器默认添加active样式
+      indicatorEl.children[0].classList.add('active')
+
+      // 开启轮播
+      startRotation()
+
+      // 点击按钮上一张，下一张来切换图片
+      preBtnEl.onclick = function () {//点击按钮切换上一张图片
+        preBtnIndex = currentBtnIndex
+        currentBtnIndex--
+        switchBanner()
+      }
+
+      nextBtnEl.onclick = switchNextImg//点击按钮切换下一张图片
+
+      // 鼠标 移入关闭定时器，移出开启定时器
+      bannersEl.onmouseenter = function () {
+        stopRotation()
+        console.log('关闭定时器')
+      }
+
+      bannersEl.onmouseleave = function () {
+        startRotation()
+        console.log('开启定时器')
+      }
+
+      // 指示器点击切换图片功能
+      for (var i = 0; i < bannersCount; i++) {
+        indicatorEl.children[i].index = i
+        indicatorEl.children[i].onclick = function () {
+          preBtnIndex = currentBtnIndex
+          currentBtnIndex = this.index
+          switchBanner()
+        }
+      }
+
+
+      // 工具函数封装
+      // 下一张图片按钮，及自动轮播函数封装
+      function switchNextImg() {
+        preBtnIndex = currentBtnIndex
+        currentBtnIndex++
+        switchBanner()
+      }
+
+      imagesUlEl.ontransitionstart = function () {//ul.images元素动画开始才进行禁用点击按钮
+        console.log('动画开始，禁用点击事件')
+        preBtnEl.classList.add('disable')
+        nextBtnEl.classList.add('disable')
+      }
+      imagesUlEl.ontransitionend = function () {//ul.images元素动画结束才进行解除
+        console.log('动画结束解除点击事件限制')
+        preBtnEl.classList.remove('disable')
+        nextBtnEl.classList.remove('disable')
+      }
+
+
+      // // 开启轮播功能函数封装
+      function startRotation() {
+        if (timer) return
+        timer = setInterval(switchNextImg, 3000)
+      }
+      // 停止轮播功能函数封装
+      function stopRotation() {
+        if (!timer) return
+        clearInterval(timer)
+        // console.log('清除定时器')
+        timer = null
+        console.log('定时器的值：', timer)
+      }
+      // 切换图片
+      function switchBanner() {
+        // console.log('next一张')
+        // 图片样式切换
+        imagesUlEl.style.transition = `left ease ${animationDuration}ms`
+        console.log(imagesUlEl.style.transition)
+
+        imagesUlEl.style.left = `${-currentBtnIndex * 100}%`
+
+        if (currentBtnIndex === bannersCount) {
+          currentBtnIndex = 0
+          setTimeout(() => {
+            preBtnEl.classList.remove('disable')
+            nextBtnEl.classList.remove('disable')
+            imagesUlEl.style.transition = "none"
+            imagesUlEl.style.left = `${-currentBtnIndex * 100}%`
+          }, animationDuration)
+        } else if (currentBtnIndex === -1) {
+          currentBtnIndex = bannersCount - 1
+          setTimeout(() => {
+            preBtnEl.classList.remove('disable')
+            nextBtnEl.classList.remove('disable')
+            imagesUlEl.style.transition = "none"
+            imagesUlEl.style.left = `${-currentBtnIndex * 100}%`
+          }, animationDuration)
+        }
+        // 指示器样式切换
+        indicatorEl.children[preBtnIndex].classList.remove('active')
+        indicatorEl.children[currentBtnIndex].classList.add('active')
+      }
+      // 通过window的焦点
+      document.onvisibilitychange = function () {
+        console.log("可见性发生改变", document.visibilityState)
+        if (document.visibilityState === "visible") {
+          startRotation()
+        } else if (document.visibilityState === "hidden") {
+          stopRotation()
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>
