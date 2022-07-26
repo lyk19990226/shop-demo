@@ -2,11 +2,11 @@ var bannerServerURL = "https://res.vmallres.com/"
 var bannersEl = document.querySelector('.banners')
 var imagesUlEl = document.querySelector('.images')
 var indicatorEl = document.querySelector('.indicator')
-var preBtnIndex = 0 //记录上一个active的索引
-var currentBtnIndex = 0//记录当前active的索引
 var preBtnEl = document.querySelector('.pre')
 var nextBtnEl = document.querySelector('.next')
-var timer = null
+var preBtnIndex = 0 //记录上一个active的索引
+var currentBtnIndex = 0//记录当前active的索引
+var timer = null //定时器初始值
 
 // 获取轮播图列表信息 post请求
 $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/banners', res => {
@@ -52,6 +52,7 @@ $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/ban
 
   bannersEl.onmouseleave = function () {
     startRotation()
+    console.log('start')
   }
 
   // 指示器点击切换图片功能
