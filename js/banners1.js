@@ -79,11 +79,16 @@ $.post('https://www.fastmock.site/mock/ae0babd1926b040dc68bd7b6fde5fbf1/shop/ban
 
   // 开启轮播功能函数封装
   function startRotation() {
+    if(timer) return
     timer = setInterval(switchNextImg, 3000)
   }
   // 停止轮播功能函数封装
   function stopRotation() {
+    if(!timer) return
     clearInterval(timer)
+    // console.log('清除定时器')
+    timer = null
+    console.log(timer)
   }
   // 切换图片
   function switchBanner() {
